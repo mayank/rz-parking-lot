@@ -1,0 +1,228 @@
+{
+	"info": {
+		"_postman_id": "7c4be129-0b38-40ca-9551-48ab2b4dda07",
+		"name": "Parking Lot",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create a Parking Lot",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Sector 16, Noida\",\n\t\"floors\": [{\n\t\t\"no\": 1,\n\t\t\"slots\": [{\n\t\t\t\"no\": 1,\n\t\t\t\"distance\": 1\n\t\t},\n\t\t{\n\t\t\t\"no\": 2,\n\t\t\t\"distance\": 2\n\t\t},{\n\t\t\t\"no\": 3,\n\t\t\t\"distance\": 3\n\t\t}]\n\t}]\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/parking-lot/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"parking-lot",
+						""
+					]
+				},
+				"description": "Create New Parking Lot"
+			},
+			"response": []
+		},
+		{
+			"name": "Park a Vehicle",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"vehicle_no\": \"UP16AX4708\",\n\t\"color\": \"#FF96FD\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/park/16",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"park",
+						"16"
+					]
+				},
+				"description": "Park a vehicle"
+			},
+			"response": []
+		},
+		{
+			"name": "Unpark a Vehicle",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"ticket_no\": 17,\n\t\"vehicle_no\": \"A\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/unpark/16",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"unpark",
+						"16"
+					]
+				},
+				"description": "Unpark a Vehicle"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Parking Lot Status",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/parking-lot/25",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"parking-lot",
+						"25"
+					]
+				},
+				"description": "Get current status of parking lot"
+			},
+			"response": []
+		},
+		{
+			"name": "Search a Car",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/search/16?car=UP16AX",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"search",
+						"16"
+					],
+					"query": [
+						{
+							"key": "car",
+							"value": "UP16AX"
+						}
+					]
+				},
+				"description": "Search by Car Number"
+			},
+			"response": []
+		},
+		{
+			"name": "Search Car by Color",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/search/16?color=Red",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"search",
+						"16"
+					],
+					"query": [
+						{
+							"key": "color",
+							"value": "Red"
+						}
+					]
+				},
+				"description": "Search by Color"
+			},
+			"response": []
+		}
+	]
+}
