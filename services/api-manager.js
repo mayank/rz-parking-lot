@@ -7,6 +7,14 @@ export default {
         
         app.use(EXPRESS.json())
 
+        /**
+         * @api {post} /api/parking-lot/ Creates a new Parking Lot
+         * @apiGroup Admin
+         *
+         * @apiParam {JSON} A Parking lot object
+         *
+         * @apiSuccess {Number} Id of parking lot
+         */
         app.post('/api/parking-lot/', async (req, res) => {
             ParkingAdmin.createParkingLot( req.body )
                 .then( parkingLotId => {

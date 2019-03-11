@@ -1,0 +1,350 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "Parking Lot",
+    "description": "TODO: Add Description",
+    "contact": {}
+  },
+  "host": "localhost:8000",
+  "basePath": "/api",
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/parking-lot": {
+      "post": {
+        "description": "Create New Parking Lot",
+        "summary": "Create a Parking Lot",
+        "tags": [
+          "Misc"
+        ],
+        "operationId": "ParkingLotPost",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CreateaParkingLotRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/park/16": {
+      "post": {
+        "description": "Park a vehicle",
+        "summary": "Park a Vehicle",
+        "tags": [
+          "Misc"
+        ],
+        "operationId": "Park16Post",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ParkaVehicleRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/unpark/16": {
+      "post": {
+        "description": "Unpark a Vehicle",
+        "summary": "Unpark a Vehicle",
+        "tags": [
+          "Misc"
+        ],
+        "operationId": "Unpark16Post",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/UnparkaVehicleRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/parking-lot/25": {
+      "get": {
+        "description": "Get current status of parking lot",
+        "summary": "Get Parking Lot Status",
+        "tags": [
+          "Misc"
+        ],
+        "operationId": "ParkingLot25Get",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/search/16": {
+      "get": {
+        "description": "Search by Car Number",
+        "summary": "Search a Car",
+        "tags": [
+          "Misc"
+        ],
+        "operationId": "Search16Get",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "car",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "CreateaParkingLotRequest": {
+      "title": "CreateaParkingLotRequest",
+      "example": {
+        "name": "Sector 16, Noida",
+        "floors": [
+          {
+            "no": 1,
+            "slots": [
+              {
+                "no": 1,
+                "distance": 1
+              },
+              {
+                "no": 2,
+                "distance": 2
+              },
+              {
+                "no": 3,
+                "distance": 3
+              }
+            ]
+          }
+        ]
+      },
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "floors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Floor"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "floors"
+      ]
+    },
+    "Floor": {
+      "title": "Floor",
+      "type": "object",
+      "properties": {
+        "no": {
+          "example": 1,
+          "type": "integer",
+          "format": "int32"
+        },
+        "slots": {
+          "example": [
+            {
+              "no": 1,
+              "distance": 1
+            },
+            {
+              "no": 2,
+              "distance": 2
+            },
+            {
+              "no": 3,
+              "distance": 3
+            }
+          ],
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Slot"
+          }
+        }
+      },
+      "required": [
+        "no",
+        "slots"
+      ]
+    },
+    "Slot": {
+      "title": "Slot",
+      "example": {
+        "no": 1,
+        "distance": 1
+      },
+      "type": "object",
+      "properties": {
+        "no": {
+          "example": 1,
+          "type": "integer",
+          "format": "int32"
+        },
+        "distance": {
+          "example": 1,
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "required": [
+        "no",
+        "distance"
+      ]
+    },
+    "ParkaVehicleRequest": {
+      "title": "ParkaVehicleRequest",
+      "example": {
+        "vehicle_no": "UP16AX4708",
+        "color": "#FF96FD"
+      },
+      "type": "object",
+      "properties": {
+        "vehicle_no": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "vehicle_no",
+        "color"
+      ]
+    },
+    "UnparkaVehicleRequest": {
+      "title": "UnparkaVehicleRequest",
+      "example": {
+        "ticket_no": 17,
+        "vehicle_no": "A"
+      },
+      "type": "object",
+      "properties": {
+        "ticket_no": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "vehicle_no": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticket_no",
+        "vehicle_no"
+      ]
+    }
+  },
+  "tags": [
+    {
+      "name": "Misc",
+      "description": ""
+    }
+  ]
+}
