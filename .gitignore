@@ -1,5 +1,5 @@
 .vscode/
 node_modules/
 coverage/
-.DS_store/
+.DS_Store/
 dist/
