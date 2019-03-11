@@ -68,17 +68,7 @@ function (_DBModel) {
     return _this;
   }
 
-  _createClass(Ticket, [{
-    key: "getVehicleId",
-    value: function getVehicleId() {
-      return this.db.vid;
-    }
-  }, {
-    key: "isValid",
-    value: function isValid() {
-      return this.db.state == states.CREATED;
-    }
-  }], [{
+  _createClass(Ticket, null, [{
     key: "states",
     get: function get() {
       return states;

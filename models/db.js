@@ -38,7 +38,12 @@ export default class DatabaseModel {
         let query = `SELECT * FROM ${child.tableName} WHERE `
         let subquery = []
         for(let key in obj) {
-            subquery.push([key, '?'].join(" = "))
+            if(typeof obj[key] == 'object') {
+                subquery.push([key, '(?)'].join(" in "))
+            }
+            else {
+                subquery.push([key, '?'].join(" = "))
+            }
         }
         query += subquery.join(" and ")
         let results = await DatabaseManager.query(query, Object.values(obj))

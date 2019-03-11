@@ -65,20 +65,19 @@ var _default = {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _context2.t0 = res;
-                _context2.next = 3;
-                return _parkingManager.default.getParkingLot(req.params.id);
+                _parkingAdmin.default.getParkingLot(req.params.id).then(function (data) {
+                  res.send({
+                    'status': 'OK',
+                    'data': data
+                  });
+                }).catch(function (err) {
+                  res.send({
+                    'status': 'Error',
+                    'message': 'Error Getting Parking Lot Status'
+                  });
+                });
 
-              case 3:
-                _context2.t1 = _context2.sent;
-                _context2.t2 = {
-                  'status': 'OK',
-                  'data': _context2.t1
-                };
-
-                _context2.t0.send.call(_context2.t0, _context2.t2);
-
-              case 6:
+              case 1:
               case "end":
                 return _context2.stop();
             }
@@ -100,10 +99,13 @@ var _default = {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                _parkingManager.default.park(req.params.id, req.body.vehicle_no, req.body.color).then(function (ticket) {
+                _parkingManager.default.park(req.params.id, req.body.vehicle_no, req.body.color).then(function (data) {
                   res.send({
                     'status': 'OK',
-                    'data': ticket
+                    'data': {
+                      ticket_no: data.ticket.getId(),
+                      stot_no: data.slot.getSlotNo()
+                    }
                   });
                 }).catch(function (err) {
                   res.send({

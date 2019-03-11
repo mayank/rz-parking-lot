@@ -7,7 +7,8 @@ class ParkingManager {
 
     async search(parkingLotId, params) {
         let query = `
-            SELECT * FROM ${ParkingSlot.tableName} as parkingLot
+            SELECT slotno, vno, floor, color FROM 
+            ${ParkingSlot.tableName} as parkingLot
             JOIN
             ${Vehicle.tableName} as vehicle
             ON 
@@ -26,7 +27,17 @@ class ParkingManager {
             query += ` AND vehicle.color = ?`
         }
 
-        return await DBModel.query(query, searchParams)
+        let queryResult = await DBModel.query(query, searchParams)
+        let results = []
+        for(let result of queryResult) {
+            results.push({
+                slot_no: result.slotno,
+                vehicle_no: result.vno,
+                vehicle_color: result.color,
+                floor_no: result.floor
+            })
+        }
+        return results
     }
     
     async park(parkingLotId, vehicleNo, color) {
@@ -71,7 +82,10 @@ class ParkingManager {
                 await ticket.save()
 
                 await DBModel.commit()
-                return ticket
+                return {
+                    slot: slots[0],
+                    ticket: ticket
+                }
             }
             else {
                 throw (new Error('No Parking Available'))

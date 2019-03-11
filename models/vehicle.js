@@ -18,6 +18,14 @@ class Vehicle extends DBModel {
         this.db.color = color
     }
 
+    getVehicleNo() {
+        return this.db.vno
+    }
+
+    getVehicleColor() {
+        return this.db.color
+    }
+
 }
 
 Vehicle.setTable('vehicle')

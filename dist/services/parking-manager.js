@@ -38,12 +38,13 @@ function () {
       var _search = _asyncToGenerator(
       /*#__PURE__*/
       regeneratorRuntime.mark(function _callee(parkingLotId, params) {
-        var query, searchParams;
+        var query, searchParams, queryResult, results, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, result;
+
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                query = "\n            SELECT * FROM ".concat(_parkingSlot.default.tableName, " as parkingLot\n            JOIN\n            ").concat(_vehicle.default.tableName, " as vehicle\n            ON \n            parkingLot.vid = vehicle.id\n            WHERE plid = ?\n        ");
+                query = "\n            SELECT slotno, vno, floor, color FROM \n            ".concat(_parkingSlot.default.tableName, " as parkingLot\n            JOIN\n            ").concat(_vehicle.default.tableName, " as vehicle\n            ON \n            parkingLot.vid = vehicle.id\n            WHERE plid = ?\n        ");
                 searchParams = [parkingLotId];
 
                 if (params.car) {
@@ -60,14 +61,65 @@ function () {
                 return _db.default.query(query, searchParams);
 
               case 6:
-                return _context.abrupt("return", _context.sent);
+                queryResult = _context.sent;
+                results = [];
+                _iteratorNormalCompletion = true;
+                _didIteratorError = false;
+                _iteratorError = undefined;
+                _context.prev = 11;
 
-              case 7:
+                for (_iterator = queryResult[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                  result = _step.value;
+                  results.push({
+                    slot_no: result.slotno,
+                    vehicle_no: result.vno,
+                    vehicle_color: result.color,
+                    floor_no: result.floor
+                  });
+                }
+
+                _context.next = 19;
+                break;
+
+              case 15:
+                _context.prev = 15;
+                _context.t0 = _context["catch"](11);
+                _didIteratorError = true;
+                _iteratorError = _context.t0;
+
+              case 19:
+                _context.prev = 19;
+                _context.prev = 20;
+
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                  _iterator.return();
+                }
+
+              case 22:
+                _context.prev = 22;
+
+                if (!_didIteratorError) {
+                  _context.next = 25;
+                  break;
+                }
+
+                throw _iteratorError;
+
+              case 25:
+                return _context.finish(22);
+
+              case 26:
+                return _context.finish(19);
+
+              case 27:
+                return _context.abrupt("return", results);
+
+              case 28:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee);
+        }, _callee, null, [[11, 15, 19, 27], [20,, 22, 26]]);
       }));
 
       function search(_x, _x2) {
@@ -143,13 +195,16 @@ function () {
                 return _db.default.commit();
 
               case 26:
-                return _context2.abrupt("return", ticket);
+                return _context2.abrupt("return", {
+                  slot: slots[0],
+                  ticket: ticket
+                });
 
               case 29:
                 throw new Error('No Parking Available');
 
               case 30:
-                _context2.next = 36;
+                _context2.next = 37;
                 break;
 
               case 32:
@@ -159,6 +214,9 @@ function () {
                 return _db.default.rollback();
 
               case 36:
+                throw new Error('No Parking Available');
+
+              case 37:
               case "end":
                 return _context2.stop();
             }

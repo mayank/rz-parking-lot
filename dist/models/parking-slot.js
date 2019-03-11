@@ -63,6 +63,16 @@ function (_DBModel) {
   }
 
   _createClass(ParkingSlot, [{
+    key: "getSlotNo",
+    value: function getSlotNo() {
+      return this.db.slotno;
+    }
+  }, {
+    key: "getFloorNo",
+    value: function getFloorNo() {
+      return this.db.floor;
+    }
+  }, {
     key: "getVehicleId",
     value: function getVehicleId() {
       return this.db.vid;

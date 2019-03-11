@@ -7,14 +7,6 @@ export default {
         
         app.use(EXPRESS.json())
 
-        /**
-         * @api {post} /api/parking-lot/ Creates a new Parking Lot
-         * @apiGroup Admin
-         *
-         * @apiParam {JSON} A Parking lot object
-         *
-         * @apiSuccess {Number} Id of parking lot
-         */
         app.post('/api/parking-lot/', async (req, res) => {
             ParkingAdmin.createParkingLot( req.body )
                 .then( parkingLotId => {
@@ -33,18 +25,30 @@ export default {
         })
 
         app.get('/api/parking-lot/:id', async (req, res) => {
-            res.send({
-                'status': 'OK',
-                'data': await ParkingManager.getParkingLot(req.params.id)
-            })
+            ParkingAdmin.getParkingLot(req.params.id)
+                .then( data => {
+                    res.send({
+                        'status': 'OK',
+                        'data': data
+                    })
+                })
+                .catch(err => {
+                    res.send({
+                        'status': 'Error',
+                        'message': 'Error Getting Parking Lot Status'
+                    })
+                })
         })
 
         app.post('/api/park/:id', async (req, res) => {
             ParkingManager.park(req.params.id, req.body.vehicle_no, req.body.color)
-                .then( ticket => {
+                .then( data => {
                     res.send({
                         'status': 'OK',
-                        'data': ticket
+                        'data': {
+                            ticket_no: data.ticket.getId(),
+                            stot_no: data.slot.getSlotNo()
+                        }
                     })
                 })
                 .catch(err => {
@@ -52,7 +56,7 @@ export default {
                         'status': 'Error',
                         'message': 'No Parking Available'
                     })
-            })
+                })
         })
 
         app.post('/api/unpark/:id', async( req, res) => {

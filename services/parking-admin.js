@@ -33,20 +33,32 @@ class ParkingAdmin {
 
     async getParkingLot(id) {
         let parkingLot = await DBModel.find(id, ParkingLot)
+        
+        if(!parkingLot) {
+            throw (new Error('Parking Lot not Exists'))
+        }
 
         let slots = await DBModel.get({
             plid: parkingLot.getId()
         }, ParkingSlot)
-        
-        let vehicleIds = []
+
+        let vehicleMap = {}
+        let results = {}
+
         for(let slot of slots) {
+
             let vehicleId = slot.getVehicleId()
             if(vehicleId){
-                vehicleIds.push(vehicleId)
+                vehicleMap[vehicleId] = slot.getId()
+            }
+
+            results[slot.getId()] = {
+                slot_no: slot.getSlotNo(),
+                floor_no: slot.getFloorNo()
             }
         }
 
-        let vehicleMap = {}
+        let vehicleIds = Object.keys(vehicleMap)
 
         if(vehicleIds.length > 0){
             let vehicles = await DBModel.get({
@@ -54,14 +66,14 @@ class ParkingAdmin {
             }, Vehicle)
 
             for(let vehicle of vehicles) {
-                vehicleMap[vehicle.getId()] = vehicle
+                let slotId = vehicleMap[vehicle.getId()]
+                
+                results[slotId].vehicle_no = vehicle.getVehicleNo()
+                results[slotId].vehicle_color = vehicle.getVehicleColor()
             }
         }
-    
-        return {
-            slots: slots,
-            vehicles: vehicleMap
-        }
+        
+        return Object.values(results)
     }
 }
 

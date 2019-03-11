@@ -75,7 +75,13 @@ describe('create a parking lot', () => {
 
         expect.assertions(2)
         let results = await ParkingAdmin.getParkingLot(lot)
-        expect(results).toHaveProperty('slots')
-        expect(results).toHaveProperty('vehicles')
+        expect(results).toHaveProperty('length')
+        expect(results.length).toBeGreaterThan(0)
+    })
+
+    it('trying to get unavailable parking lot', async () => {
+
+        expect.assertions(1)
+        await expect(ParkingAdmin.getParkingLot(100000)).rejects.toThrowError('Parking Lot not Exists')
     })
 })

@@ -9,6 +9,8 @@ var _database = _interopRequireDefault(require("../services/database"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
@@ -195,96 +197,83 @@ function () {
       var _get = _asyncToGenerator(
       /*#__PURE__*/
       regeneratorRuntime.mark(function _callee6(obj, child) {
-        var count,
-            query,
-            subquery,
-            key,
-            results,
-            ans,
-            _iteratorNormalCompletion,
-            _didIteratorError,
-            _iteratorError,
-            _iterator,
-            _step,
-            db,
-            _args6 = arguments;
+        var query, subquery, key, results, ans, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, db;
 
         return regeneratorRuntime.wrap(function _callee6$(_context6) {
           while (1) {
             switch (_context6.prev = _context6.next) {
               case 0:
-                count = _args6.length > 2 && _args6[2] !== undefined ? _args6[2] : null;
                 query = "SELECT * FROM ".concat(child.tableName, " WHERE ");
                 subquery = [];
 
                 for (key in obj) {
-                  subquery.push([key, '?'].join(" = "));
+                  if (_typeof(obj[key]) == 'object') {
+                    subquery.push([key, '(?)'].join(" in "));
+                  } else {
+                    subquery.push([key, '?'].join(" = "));
+                  }
                 }
 
                 query += subquery.join(" and ");
-
-                if (count > 0) {
-                  query += " LIMIT ".concat(count);
-                }
-
-                _context6.next = 8;
+                console.log(query);
+                _context6.next = 7;
                 return _database.default.query(query, Object.values(obj));
 
-              case 8:
+              case 7:
                 results = _context6.sent;
                 ans = [];
                 _iteratorNormalCompletion = true;
                 _didIteratorError = false;
                 _iteratorError = undefined;
-                _context6.prev = 13;
+                _context6.prev = 12;
 
                 for (_iterator = results[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                   db = _step.value;
                   ans.push(this.create(db, child));
                 }
 
-                _context6.next = 21;
+                _context6.next = 20;
                 break;
 
-              case 17:
-                _context6.prev = 17;
-                _context6.t0 = _context6["catch"](13);
+              case 16:
+                _context6.prev = 16;
+                _context6.t0 = _context6["catch"](12);
                 _didIteratorError = true;
                 _iteratorError = _context6.t0;
 
-              case 21:
+              case 20:
+                _context6.prev = 20;
                 _context6.prev = 21;
-                _context6.prev = 22;
 
                 if (!_iteratorNormalCompletion && _iterator.return != null) {
                   _iterator.return();
                 }
 
-              case 24:
-                _context6.prev = 24;
+              case 23:
+                _context6.prev = 23;
 
                 if (!_didIteratorError) {
-                  _context6.next = 27;
+                  _context6.next = 26;
                   break;
                 }
 
                 throw _iteratorError;
 
+              case 26:
+                return _context6.finish(23);
+
               case 27:
-                return _context6.finish(24);
+                return _context6.finish(20);
 
               case 28:
-                return _context6.finish(21);
-
-              case 29:
                 return _context6.abrupt("return", ans);
 
-              case 30:
+              case 29:
               case "end":
                 return _context6.stop();
             }
           }
-        }, _callee6, this, [[13, 17, 21, 29], [22,, 24, 28]]);
+        }, _callee6, this, [[12, 16, 20, 28], [21,, 23, 27]]);
       }));
 
       function get(_x3, _x4) {
@@ -323,11 +312,6 @@ function () {
 
       return query;
     }()
-  }, {
-    key: "format",
-    value: function format(query, data) {
-      return _database.default.format(query, data);
-    }
   }, {
     key: "create",
     value: function create(db, child) {

@@ -209,7 +209,7 @@ function () {
       var _getParkingLot = _asyncToGenerator(
       /*#__PURE__*/
       regeneratorRuntime.mark(function _callee2(id) {
-        var parkingLot, slots, vehicleIds, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, slot, vehicleId, vehicleMap, vehicles, _iteratorNormalCompletion4, _didIteratorError4, _iteratorError4, _iterator4, _step4, vehicle;
+        var parkingLot, slots, vehicleMap, results, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, slot, vehicleId, vehicleIds, vehicles, _iteratorNormalCompletion4, _didIteratorError4, _iteratorError4, _iterator4, _step4, vehicle, slotId;
 
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
@@ -220,131 +220,146 @@ function () {
 
               case 2:
                 parkingLot = _context2.sent;
-                _context2.next = 5;
+
+                if (parkingLot) {
+                  _context2.next = 5;
+                  break;
+                }
+
+                throw new Error('Parking Lot not Exists');
+
+              case 5:
+                _context2.next = 7;
                 return _db.default.get({
                   plid: parkingLot.getId()
                 }, _parkingSlot.default);
 
-              case 5:
+              case 7:
                 slots = _context2.sent;
-                vehicleIds = [];
+                vehicleMap = {};
+                results = {};
                 _iteratorNormalCompletion3 = true;
                 _didIteratorError3 = false;
                 _iteratorError3 = undefined;
-                _context2.prev = 10;
+                _context2.prev = 13;
 
                 for (_iterator3 = slots[Symbol.iterator](); !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
                   slot = _step3.value;
                   vehicleId = slot.getVehicleId();
 
                   if (vehicleId) {
-                    vehicleIds.push(vehicleId);
+                    vehicleMap[vehicleId] = slot.getId();
                   }
+
+                  results[slot.getId()] = {
+                    slot_no: slot.getSlotNo(),
+                    floor_no: slot.getFloorNo()
+                  };
                 }
 
-                _context2.next = 18;
+                _context2.next = 21;
                 break;
 
-              case 14:
-                _context2.prev = 14;
-                _context2.t0 = _context2["catch"](10);
+              case 17:
+                _context2.prev = 17;
+                _context2.t0 = _context2["catch"](13);
                 _didIteratorError3 = true;
                 _iteratorError3 = _context2.t0;
 
-              case 18:
-                _context2.prev = 18;
-                _context2.prev = 19;
+              case 21:
+                _context2.prev = 21;
+                _context2.prev = 22;
 
                 if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
                   _iterator3.return();
                 }
 
-              case 21:
-                _context2.prev = 21;
+              case 24:
+                _context2.prev = 24;
 
                 if (!_didIteratorError3) {
-                  _context2.next = 24;
+                  _context2.next = 27;
                   break;
                 }
 
                 throw _iteratorError3;
 
-              case 24:
+              case 27:
+                return _context2.finish(24);
+
+              case 28:
                 return _context2.finish(21);
 
-              case 25:
-                return _context2.finish(18);
-
-              case 26:
-                vehicleMap = {};
+              case 29:
+                vehicleIds = Object.keys(vehicleMap);
 
                 if (!(vehicleIds.length > 0)) {
-                  _context2.next = 50;
+                  _context2.next = 53;
                   break;
                 }
 
-                _context2.next = 30;
+                _context2.next = 33;
                 return _db.default.get({
                   id: vehicleIds
                 }, _vehicle.default);
 
-              case 30:
+              case 33:
                 vehicles = _context2.sent;
                 _iteratorNormalCompletion4 = true;
                 _didIteratorError4 = false;
                 _iteratorError4 = undefined;
-                _context2.prev = 34;
+                _context2.prev = 37;
 
                 for (_iterator4 = vehicles[Symbol.iterator](); !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
                   vehicle = _step4.value;
-                  vehicleMap[vehicle.getId()] = vehicle;
+                  slotId = vehicleMap[vehicle.getId()];
+                  console.log(vehicle, slotId);
+                  results[slotId].vehicle_no = vehicle.getVehicleNo();
+                  results[slotId].vehicle_color = vehicle.getVehicleColor();
                 }
 
-                _context2.next = 42;
+                _context2.next = 45;
                 break;
 
-              case 38:
-                _context2.prev = 38;
-                _context2.t1 = _context2["catch"](34);
+              case 41:
+                _context2.prev = 41;
+                _context2.t1 = _context2["catch"](37);
                 _didIteratorError4 = true;
                 _iteratorError4 = _context2.t1;
 
-              case 42:
-                _context2.prev = 42;
-                _context2.prev = 43;
+              case 45:
+                _context2.prev = 45;
+                _context2.prev = 46;
 
                 if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
                   _iterator4.return();
                 }
 
-              case 45:
-                _context2.prev = 45;
+              case 48:
+                _context2.prev = 48;
 
                 if (!_didIteratorError4) {
-                  _context2.next = 48;
+                  _context2.next = 51;
                   break;
                 }
 
                 throw _iteratorError4;
 
-              case 48:
+              case 51:
+                return _context2.finish(48);
+
+              case 52:
                 return _context2.finish(45);
 
-              case 49:
-                return _context2.finish(42);
+              case 53:
+                return _context2.abrupt("return", Object.values(results));
 
-              case 50:
-                return _context2.abrupt("return", {
-                  slots: slots,
-                  vehicles: vehicleMap
-                });
-
-              case 51:
+              case 54:
               case "end":
                 return _context2.stop();
             }
           }
-        }, _callee2, null, [[10, 14, 18, 26], [19,, 21, 25], [34, 38, 42, 50], [43,, 45, 49]]);
+        }, _callee2, null, [[13, 17, 21, 29], [22,, 24, 28], [37, 41, 45, 53], [46,, 48, 52]]);
       }));
 
       function getParkingLot(_x2) {

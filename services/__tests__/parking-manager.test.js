@@ -2,6 +2,7 @@ import ParkingManager from '../parking-manager'
 import Ticket from '../../models/ticket'
 import ParkingAdmin from '../parking-admin'
 import DatabaseManger from '../database'
+import ParkingSlot from '../../models/parking-slot'
 
 let lotId = 0
 beforeAll(async () => {
@@ -25,9 +26,13 @@ describe('parking, unparking and searching of vehicles', () => {
     let ticket = null
 
     it('parks a vehicle', async () => {
-        expect.assertions(1)
-        ticket = await ParkingManager.park(lotId, vehicle, '#000000')
-        expect(ticket).toBeInstanceOf(Ticket)
+        expect.assertions(4)
+        let result = await ParkingManager.park(lotId, vehicle, '#000000')
+        expect(result).toHaveProperty('slot')
+        expect(result.slot).toBeInstanceOf(ParkingSlot)
+        expect(result).toHaveProperty('ticket')
+        expect(result.ticket).toBeInstanceOf(Ticket)
+        ticket = result.ticket
     })
 
     it('unparks a vehicle', async () => {
@@ -37,9 +42,12 @@ describe('parking, unparking and searching of vehicles', () => {
     })
 
     it('parking same vehicle', async () => {
-        expect.assertions(1)
-        ticket = await ParkingManager.park(lotId, vehicle, '#000000')
-        expect(ticket).toBeInstanceOf(Ticket)
+        expect.assertions(4)
+        let result = await ParkingManager.park(lotId, vehicle, '#000000')
+        expect(result).toHaveProperty('slot')
+        expect(result.slot).toBeInstanceOf(ParkingSlot)
+        expect(result).toHaveProperty('ticket')
+        expect(result.ticket).toBeInstanceOf(Ticket)
     })
 
     it('parking full', async () => {

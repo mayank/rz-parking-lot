@@ -34,6 +34,14 @@ class ParkingSlot extends DBModel {
         return states
     }
 
+    getSlotNo() {
+        return this.db.slotno
+    }
+
+    getFloorNo() {
+        return this.db.floor
+    }
+
     getVehicleId() {
         return this.db.vid
     }
