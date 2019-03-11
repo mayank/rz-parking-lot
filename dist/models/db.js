@@ -215,65 +215,64 @@ function () {
                 }
 
                 query += subquery.join(" and ");
-                console.log(query);
-                _context6.next = 7;
+                _context6.next = 6;
                 return _database.default.query(query, Object.values(obj));
 
-              case 7:
+              case 6:
                 results = _context6.sent;
                 ans = [];
                 _iteratorNormalCompletion = true;
                 _didIteratorError = false;
                 _iteratorError = undefined;
-                _context6.prev = 12;
+                _context6.prev = 11;
 
                 for (_iterator = results[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                   db = _step.value;
                   ans.push(this.create(db, child));
                 }
 
-                _context6.next = 20;
+                _context6.next = 19;
                 break;
 
-              case 16:
-                _context6.prev = 16;
-                _context6.t0 = _context6["catch"](12);
+              case 15:
+                _context6.prev = 15;
+                _context6.t0 = _context6["catch"](11);
                 _didIteratorError = true;
                 _iteratorError = _context6.t0;
 
-              case 20:
+              case 19:
+                _context6.prev = 19;
                 _context6.prev = 20;
-                _context6.prev = 21;
 
                 if (!_iteratorNormalCompletion && _iterator.return != null) {
                   _iterator.return();
                 }
 
-              case 23:
-                _context6.prev = 23;
+              case 22:
+                _context6.prev = 22;
 
                 if (!_didIteratorError) {
-                  _context6.next = 26;
+                  _context6.next = 25;
                   break;
                 }
 
                 throw _iteratorError;
 
+              case 25:
+                return _context6.finish(22);
+
               case 26:
-                return _context6.finish(23);
+                return _context6.finish(19);
 
               case 27:
-                return _context6.finish(20);
-
-              case 28:
                 return _context6.abrupt("return", ans);
 
-              case 29:
+              case 28:
               case "end":
                 return _context6.stop();
             }
           }
-        }, _callee6, this, [[12, 16, 20, 28], [21,, 23, 27]]);
+        }, _callee6, this, [[11, 15, 19, 27], [20,, 22, 26]]);
       }));
 
       function get(_x3, _x4) {

@@ -313,7 +313,6 @@ function () {
                 for (_iterator4 = vehicles[Symbol.iterator](); !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
                   vehicle = _step4.value;
                   slotId = vehicleMap[vehicle.getId()];
-                  console.log(vehicle, slotId);
                   results[slotId].vehicle_no = vehicle.getVehicleNo();
                   results[slotId].vehicle_color = vehicle.getVehicleColor();
                 }

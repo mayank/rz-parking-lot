@@ -3,7 +3,8 @@
 ### Setup 
 * Requires `nodejs >= 8`
 * Run `npm install` in the directory to setup
-* Migrate the database from `migrations/database.sql`, create two DB(s) from dev & testing
+* Migrate the database to mysql from `migrations/database.sql`, create two DB(s) from dev & testing
+* Mysql credentials can be found in `config/db.js`
 ```
 create database `parking`;
 create database `parking_test`;
