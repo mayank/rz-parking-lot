@@ -1,15 +1,11 @@
 import MYSQL from 'mysql'
+import DBConfig from '../config/db'
+import FS from 'fs'
 
 class DatabaseManager {
 
     constructor() {
-        this.connection = MYSQL.createConnection({
-            host: process.env.DB_HOST || '127.0.0.1',
-            user: process.env.DB_USER || 'root',
-            password: process.env.DB_PASS || 'root',
-            database: 'parking',
-            port: process.env.DB_PASS || 3306
-        })
+        this.connection = MYSQL.createConnection(DBConfig)
     }
 
     query(query, data) {
@@ -43,6 +39,16 @@ class DatabaseManager {
             })
         })    
     }
+
+    async migrate() {
+        let sqlQueries = FS.readFileSync(__dirname + '/../migrations/database.sql', 'utf-8').replace('\n', '').split(';')
+        for(let query of sqlQueries) {
+            if(query.trim()){
+                await this.query(query, [])
+            }
+        }
+    }
+
 }
 
 export default new DatabaseManager()

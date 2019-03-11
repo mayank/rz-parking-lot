@@ -28,7 +28,6 @@ class ParkingAdmin {
         catch(err) {
             await DBModel.rollback()
             throw (new Error('Some Error Occured'))
-            
         }
     }
 

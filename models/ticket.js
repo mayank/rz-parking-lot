@@ -29,10 +29,6 @@ class Ticket extends DBModel {
         this.db.state = states.CREATED
         this.db.entry_time = DBModel.getCurrentTime()
     }
-
-    getVehicleId() {
-        return this.db.vid
-    }
     
     static get states() {
         return states

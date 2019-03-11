@@ -1,11 +1,17 @@
 import ParkingAdmin from '../parking-admin'
+import DatabaseManger from '../database'
+import Vehicle from '../../models/vehicle'
+import ParkingSlot from '../../models/parking-slot'
 
 const name = "fix" + Math.floor(1000 *Math.random())
+
+beforeAll(async () => {
+    await DatabaseManger.migrate()
+})
 
 describe('create a parking lot', () => {
 
     let lot = 0
-
     it('creates a parking lot object', async () => {
         expect.assertions(1)
         let results = await ParkingAdmin.createParkingLot({
@@ -61,7 +67,12 @@ describe('create a parking lot', () => {
         })).rejects.toThrowError('Some Error Occured')
     })
 
-    it('get parking lot detais', async () => {
+    it('get parking lot details', async () => {
+
+        let vehicle = new Vehicle("A", "#000000")
+        await vehicle.save()
+        await DatabaseManger.query(`UPDATE ${ParkingSlot.tableName} set vid = ?, state = ? LIMIT 1`, [vehicle.getId(), ParkingSlot.states.BUSY])
+
         expect.assertions(2)
         let results = await ParkingAdmin.getParkingLot(lot)
         expect(results).toHaveProperty('slots')

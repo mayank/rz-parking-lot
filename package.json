@@ -6,8 +6,7 @@
 	"scripts": {
 		"build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore **/__tests__/,./node_modules,./.babelrc,./package.json,./npm-debug.log",
 		"start": "nodemon --exec babel-node dist/server.js",
-		"test": "jest --runInBand --detectOpenHandles --coverage",
-		"coverage": "jest --coverage --runInBand --verbose"
+		"test": "jest --runInBand --coverage --detectOpenHandles --coverage"
 	},
 	"author": "",
 	"license": "ISC",

@@ -79,6 +79,7 @@ class ParkingManager {
         }
         catch(err) {
             await DBModel.rollback()
+            throw (new Error('No Parking Available'))
         }
     }
     
@@ -129,7 +130,7 @@ class ParkingManager {
             return true
         }
         else {
-            throw new Error('Invalid Ticket')
+            throw (new Error('Invalid Ticket'))
         }   
     }
 
