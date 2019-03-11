@@ -9,7 +9,6 @@ class Server {
     async start() {
         await this.listen()
         APIManager.routes( this.app )
-        console.log('Server Started')
     }
 
     listen() {
@@ -21,6 +20,5 @@ class Server {
     }
 }
 
-// global instance of server
 var server = new Server()
 server.start() 

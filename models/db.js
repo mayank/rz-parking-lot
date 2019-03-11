@@ -34,16 +34,13 @@ export default class DatabaseModel {
         return(result.length > 0) ? this.create(result[0], child) : null
     }
 
-    static async get(obj, child, count = null) {
+    static async get(obj, child) {
         let query = `SELECT * FROM ${child.tableName} WHERE `
         let subquery = []
         for(let key in obj) {
             subquery.push([key, '?'].join(" = "))
         }
         query += subquery.join(" and ")
-        if(count > 0) {
-            query += ` LIMIT ${count}`
-        }
         let results = await DatabaseManager.query(query, Object.values(obj))
         let ans = []
         for(let db of results) {
@@ -54,10 +51,6 @@ export default class DatabaseModel {
 
     static async query(query, data) {
         return await DatabaseManager.query(query, data)
-    }
-
-    static format(query, data) {
-        return DatabaseManager.format(query, data)
     }
 
     static create(db, child) {

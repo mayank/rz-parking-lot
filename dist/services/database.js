@@ -1,86 +1,89 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
+exports.default = void 0;
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _mysql = require('mysql');
-
-var _mysql2 = _interopRequireDefault(_mysql);
+var _mysql = _interopRequireDefault(require("mysql"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var DatabaseManager = function () {
-    function DatabaseManager() {
-        _classCallCheck(this, DatabaseManager);
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-        this.pool = _mysql2.default.createPool({
-            host: process.env.DB_HOST || '127.0.0.1',
-            user: process.env.DB_USER || 'root',
-            password: process.env.DB_PASS || 'root',
-            database: 'parking',
-            port: process.env.DB_PASS || 3306
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var DatabaseManager =
+/*#__PURE__*/
+function () {
+  function DatabaseManager() {
+    _classCallCheck(this, DatabaseManager);
+
+    this.connection = _mysql.default.createConnection({
+      host: process.env.DB_HOST || '127.0.0.1',
+      user: process.env.DB_USER || 'root',
+      password: process.env.DB_PASS || 'root',
+      database: 'parking',
+      port: process.env.DB_PASS || 3306
+    });
+  }
+
+  _createClass(DatabaseManager, [{
+    key: "query",
+    value: function query(_query, data) {
+      var _this = this;
+
+      return new Promise(function (res, rej) {
+        _this.connection.query(_query, data, function (err, result) {
+          err ? rej(err) : res(result);
         });
-        console.log('MYSQL Connected with Pool');
+      });
     }
+  }, {
+    key: "format",
+    value: function format(query, data) {
+      return this.connection.format(query, data);
+    }
+  }, {
+    key: "beginTransaction",
+    value: function beginTransaction() {
+      var _this2 = this;
 
-    _createClass(DatabaseManager, [{
-        key: 'query',
-        value: function query(_query, data) {
-            var _this = this;
+      return new Promise(function (res, rej) {
+        _this2.connection.beginTransaction(function (err) {
+          err ? rej(err) : res();
+        });
+      });
+    }
+  }, {
+    key: "rollback",
+    value: function rollback() {
+      var _this3 = this;
 
-            return new Promise(function (res, rej) {
-                _this.pool.query(_query, data, function (err, result) {
-                    err ? rej(err) : res(result);
-                });
-            });
-        }
-    }, {
-        key: 'format',
-        value: function format(query, data) {
-            return this.pool.format(query, data);
-        }
-    }, {
-        key: 'beginTransaction',
-        value: function beginTransaction() {
-            var _this2 = this;
+      return new Promise(function (res) {
+        _this3.connection.rollback(function () {
+          res();
+        });
+      });
+    }
+  }, {
+    key: "commit",
+    value: function commit() {
+      var _this4 = this;
 
-            return new Promise(function (res, rej) {
-                _this2.pool.beginTransaction(function (err) {
-                    err ? rej(err) : res();
-                });
-            });
-        }
-    }, {
-        key: 'rollback',
-        value: function rollback() {
-            var _this3 = this;
+      return new Promise(function (res, rej) {
+        _this4.connection.commit(function (err) {
+          err ? rej(err) : res();
+        });
+      });
+    }
+  }]);
 
-            return new Promise(function (res) {
-                _this3.pool.rollback();
-            });
-        }
-    }, {
-        key: 'commit',
-        value: function commit() {
-            var _this4 = this;
-
-            return new Promise(function (res, rej) {
-                _this4.pool.commit(function (err) {
-                    err ? rej(err) : res();
-                });
-            });
-        }
-    }]);
-
-    return DatabaseManager;
+  return DatabaseManager;
 }();
 
-// singleton instance
+var _default = new DatabaseManager();
 
-
-exports.default = new DatabaseManager();
+exports.default = _default;

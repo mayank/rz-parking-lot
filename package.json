@@ -1,27 +1,62 @@
 {
-  "name": "parking-lot",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
-    "run": "node dist/server.js"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.16.4",
-    "mysql": "^2.16.0"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.3.4",
-    "@babel/preset-env": "^7.3.4",
-    "babel": "^6.23.0",
-    "babel-cli": "^6.26.0",
-    "babel-preset-es2015": "^6.24.1",
-    "chai": "^4.2.0",
-    "mocha": "^6.0.2",
-    "rimraf": "^2.6.3"
-  }
+	"name": "parking-lot",
+	"version": "1.0.0",
+	"description": "",
+	"main": "dist/server.js",
+	"scripts": {
+		"build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore **/__tests__/,./node_modules,./.babelrc,./package.json,./npm-debug.log",
+		"start": "nodemon --exec babel-node dist/server.js",
+		"test": "jest --runInBand --detectOpenHandles --coverage",
+		"coverage": "jest --coverage --runInBand --verbose"
+	},
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"@babel/runtime": "^7.3.4",
+		"express": "^4.16.4",
+		"jest": "^24.3.1",
+		"mysql": "^2.16.0",
+		"nodemon": "^1.18.10",
+		"rimraf": "^2.6.3"
+	},
+	"engines": {
+		"node": ">=8"
+	},
+	"babel": {
+		"presets": [
+			"@babel/preset-env"
+		],
+		"env": {
+			"test": {
+				"plugins": [
+					"@babel/plugin-transform-runtime"
+				]
+			}
+		}
+	},
+	"jest": {
+		"verbose": true
+	},
+	"eslintConfig": {
+		"plugins": [
+			"node",
+			"jest"
+		]
+	},
+	"env": {
+		"jest/globals": true,
+		"node": true,
+		"es6": true
+	},
+	"parserOptions": {
+		"sourceType": "module",
+		"ecmaVersion": 2018
+	},
+	"devDependencies": {
+		"@babel/cli": "^7.2.3",
+		"@babel/core": "^7.3.4",
+		"@babel/node": "^7.2.2",
+		"@babel/plugin-transform-runtime": "^7.3.4",
+		"@babel/preset-env": "^7.3.4"
+	}
 }

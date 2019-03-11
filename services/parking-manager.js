@@ -1,50 +1,34 @@
 import DBModel from '../models/db'
-import ParkingLot from '../models/parking-lot'
 import ParkingSlot from '../models/parking-slot'
 import Vehicle from '../models/vehicle'
 import Ticket from '../models/ticket'
 
 class ParkingManager {
 
-    async getParkingLot(id) {
-        let parkingLot = await DBModel.find(id, ParkingLot)
+    async search(parkingLotId, params) {
+        let query = `
+            SELECT * FROM ${ParkingSlot.tableName} as parkingLot
+            JOIN
+            ${Vehicle.tableName} as vehicle
+            ON 
+            parkingLot.vid = vehicle.id
+            WHERE plid = ?
+        `
+        let searchParams = [ parkingLotId ]
 
-        let slots = await DBModel.get({
-            plid: parkingLot.getId()
-        }, ParkingSlot)
-        
-        let vehicleIds = []
-        for(let slot of slots) {
-            let vehicleId = slot.getVehicleId()
-            if(vehicleId){
-                vehicleIds.push(vehicleId)
-            }
+        if(params.car) {
+            searchParams.push(params.car)
+            query += ` AND vehicle.vno = ?`
         }
 
-        let vehicleMap = {}
-
-        if(vehicleIds.length > 0){
-            let vehicles = await DBModel.get({
-                id: vehicleIds
-            }, Vehicle)
-
-            for(let vehicle of vehicles) {
-                vehicleMap[vehicle.getId()] = vehicle
-            }
+        if(params.color) {
+            searchParams.push(params.color)
+            query += ` AND vehicle.color = ?`
         }
-    
-        return {
-            slots: slots,
-            vehicles: vehicleMap
-        }
+
+        return await DBModel.query(query, searchParams)
     }
-
-    /**
-     * 
-     * @param {String} vehicleNo 
-     * @param {String} color 
-     * @throws Exception if parking is not available
-     */
+    
     async park(parkingLotId, vehicleNo, color) {
         let vehicles = await DBModel.get({
             vno: vehicleNo
@@ -59,35 +43,42 @@ class ParkingManager {
             await vehicle.save()
         }
 
-        // gets the slot
-        let updateStatus = await DBModel.query(`
-        UPDATE ${ParkingSlot.tableName} 
-         SET 
-            state = ${ParkingSlot.states.BUSY},
-            vid = ?
-         WHERE 
-            state = ${ParkingSlot.states.FREE}
-            and
-            plid = ?
-         ORDER BY distance asc
-         LIMIT 1
-        `,[
-            vehicle.getId(),
-            parkingLotId
-        ])
+        try {
+            await DBModel.beginTransaction()
 
-        if(updateStatus.changedRows > 0) {
-            let slots = await DBModel.get({
-                vid: vehicle.getId()
-            }, ParkingSlot)
+            let updateStatus = await DBModel.query(`
+            UPDATE ${ParkingSlot.tableName} 
+            SET 
+                state = ${ParkingSlot.states.BUSY},
+                vid = ?
+            WHERE 
+                state = ${ParkingSlot.states.FREE}
+                and
+                plid = ?
+            ORDER BY distance asc
+            LIMIT 1
+            `,[
+                vehicle.getId(),
+                parkingLotId
+            ])
 
-            let ticket = new Ticket(slots[0], vehicle, parkingLotId)
-            await ticket.save()
+            if(updateStatus.changedRows > 0) {
+                let slots = await DBModel.get({
+                    vid: vehicle.getId()
+                }, ParkingSlot)
 
-            return ticket
+                let ticket = new Ticket(slots[0], vehicle, parkingLotId)
+                await ticket.save()
+
+                await DBModel.commit()
+                return ticket
+            }
+            else {
+                throw (new Error('No Parking Available'))
+            }
         }
-        else {
-            throw new Error('No Parking Available!')
+        catch(err) {
+            await DBModel.rollback()
         }
     }
     
@@ -135,24 +126,11 @@ class ParkingManager {
                 vehicle.getId(), 
                 parkingLotId
             ])
-
+            return true
         }
         else {
             throw new Error('Invalid Ticket')
         }   
-    }
-
-    /**
-     * 
-     * @param {String} ticketNo 
-     */
-    payTicket(ticketNo) {
-        let ticket = Ticket.getTicket(ticketNo)
-        let parkingSlot = ticket.getSlot()
-        let vehicle = parkingSlot.removeVehicle()
-        this.parkingLot.markSlotFree(parkingSlot)
-        ticket.markAsPaid()
-        return vehicle
     }
 
 }

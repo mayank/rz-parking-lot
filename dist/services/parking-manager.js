@@ -1,193 +1,240 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
+exports.default = void 0;
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _db = _interopRequireDefault(require("../models/db"));
 
-var _db = require('../models/db');
+var _parkingSlot = _interopRequireDefault(require("../models/parking-slot"));
 
-var _db2 = _interopRequireDefault(_db);
+var _vehicle = _interopRequireDefault(require("../models/vehicle"));
 
-var _parkingLot = require('../models/parking-lot');
-
-var _parkingLot2 = _interopRequireDefault(_parkingLot);
-
-var _parkingSlot = require('../models/parking-slot');
-
-var _parkingSlot2 = _interopRequireDefault(_parkingSlot);
-
-var _vehicle = require('../models/vehicle');
-
-var _vehicle2 = _interopRequireDefault(_vehicle);
-
-var _ticket = require('../models/ticket');
-
-var _ticket2 = _interopRequireDefault(_ticket);
+var _ticket = _interopRequireDefault(require("../models/ticket"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ParkingManager = function () {
-    function ParkingManager() {
-        _classCallCheck(this, ParkingManager);
-    }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-    _createClass(ParkingManager, [{
-        key: 'getParkingLot',
-        value: async function getParkingLot(id) {
-            var parkingLot = await _db2.default.find(id, _parkingLot2.default);
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-            var slots = await _db2.default.get({
-                plid: parkingLot.getId()
-            }, _parkingSlot2.default);
+var ParkingManager =
+/*#__PURE__*/
+function () {
+  function ParkingManager() {
+    _classCallCheck(this, ParkingManager);
+  }
 
-            var vehicleIds = [];
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
+  _createClass(ParkingManager, [{
+    key: "search",
+    value: function () {
+      var _search = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee(parkingLotId, params) {
+        var query, searchParams;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                query = "\n            SELECT * FROM ".concat(_parkingSlot.default.tableName, " as parkingLot\n            JOIN\n            ").concat(_vehicle.default.tableName, " as vehicle\n            ON \n            parkingLot.vid = vehicle.id\n            WHERE plid = ?\n        ");
+                searchParams = [parkingLotId];
 
-            try {
-                for (var _iterator = slots[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var slot = _step.value;
-
-                    var vehicleId = slot.getVehicleId();
-                    if (vehicleId) {
-                        vehicleIds.push(vehicleId);
-                    }
+                if (params.car) {
+                  searchParams.push(params.car);
+                  query += " AND vehicle.vno = ?";
                 }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
+
+                if (params.color) {
+                  searchParams.push(params.color);
+                  query += " AND vehicle.color = ?";
                 }
+
+                _context.next = 6;
+                return _db.default.query(query, searchParams);
+
+              case 6:
+                return _context.abrupt("return", _context.sent);
+
+              case 7:
+              case "end":
+                return _context.stop();
             }
+          }
+        }, _callee);
+      }));
 
-            var vehicleMap = {};
+      function search(_x, _x2) {
+        return _search.apply(this, arguments);
+      }
 
-            if (vehicleIds.length > 0) {
-                var vehicles = await _db2.default.get({
-                    id: vehicleIds
-                }, _vehicle2.default);
+      return search;
+    }()
+  }, {
+    key: "park",
+    value: function () {
+      var _park = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee2(parkingLotId, vehicleNo, color) {
+        var vehicles, vehicle, updateStatus, slots, ticket;
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return _db.default.get({
+                  vno: vehicleNo
+                }, _vehicle.default);
 
-                var _iteratorNormalCompletion2 = true;
-                var _didIteratorError2 = false;
-                var _iteratorError2 = undefined;
+              case 2:
+                vehicles = _context2.sent;
+                vehicle = null;
 
-                try {
-                    for (var _iterator2 = vehicles[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                        var vehicle = _step2.value;
-
-                        vehicleMap[vehicle.getId()] = vehicle;
-                    }
-                } catch (err) {
-                    _didIteratorError2 = true;
-                    _iteratorError2 = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                            _iterator2.return();
-                        }
-                    } finally {
-                        if (_didIteratorError2) {
-                            throw _iteratorError2;
-                        }
-                    }
+                if (!(vehicles.length > 0)) {
+                  _context2.next = 8;
+                  break;
                 }
-            }
 
-            return {
-                slots: slots,
-                vehicles: vehicleMap
-            };
-        }
-
-        /**
-         * 
-         * @param {String} vehicleNo 
-         * @param {String} color 
-         * @throws Exception if parking is not available
-         */
-
-    }, {
-        key: 'park',
-        value: async function park(parkingLotId, vehicleNo, color) {
-            var vehicles = await _db2.default.get({
-                vno: vehicleNo
-            }, _vehicle2.default);
-
-            var vehicle = null;
-            if (vehicles.length > 0) {
                 vehicle = vehicles[0];
-            } else {
-                vehicle = new _vehicle2.default(vehicleNo, color);
-                await vehicle.save();
+                _context2.next = 11;
+                break;
+
+              case 8:
+                vehicle = new _vehicle.default(vehicleNo, color);
+                _context2.next = 11;
+                return vehicle.save();
+
+              case 11:
+                _context2.prev = 11;
+                _context2.next = 14;
+                return _db.default.beginTransaction();
+
+              case 14:
+                _context2.next = 16;
+                return _db.default.query("\n            UPDATE ".concat(_parkingSlot.default.tableName, " \n            SET \n                state = ").concat(_parkingSlot.default.states.BUSY, ",\n                vid = ?\n            WHERE \n                state = ").concat(_parkingSlot.default.states.FREE, "\n                and\n                plid = ?\n            ORDER BY distance asc\n            LIMIT 1\n            "), [vehicle.getId(), parkingLotId]);
+
+              case 16:
+                updateStatus = _context2.sent;
+
+                if (!(updateStatus.changedRows > 0)) {
+                  _context2.next = 29;
+                  break;
+                }
+
+                _context2.next = 20;
+                return _db.default.get({
+                  vid: vehicle.getId()
+                }, _parkingSlot.default);
+
+              case 20:
+                slots = _context2.sent;
+                ticket = new _ticket.default(slots[0], vehicle, parkingLotId);
+                _context2.next = 24;
+                return ticket.save();
+
+              case 24:
+                _context2.next = 26;
+                return _db.default.commit();
+
+              case 26:
+                return _context2.abrupt("return", ticket);
+
+              case 29:
+                throw new Error('No Parking Available');
+
+              case 30:
+                _context2.next = 36;
+                break;
+
+              case 32:
+                _context2.prev = 32;
+                _context2.t0 = _context2["catch"](11);
+                _context2.next = 36;
+                return _db.default.rollback();
+
+              case 36:
+              case "end":
+                return _context2.stop();
             }
+          }
+        }, _callee2, null, [[11, 32]]);
+      }));
 
-            // gets the slot
-            var updateStatus = await _db2.default.query('\n        UPDATE ' + _parkingSlot2.default.tableName + ' \n         SET \n            state = ' + _parkingSlot2.default.states.BUSY + ',\n            vid = ?\n         WHERE \n            state = ' + _parkingSlot2.default.states.FREE + '\n            and\n            plid = ?\n         ORDER BY distance asc\n         LIMIT 1\n        ', [vehicle.getId(), parkingLotId]);
+      function park(_x3, _x4, _x5) {
+        return _park.apply(this, arguments);
+      }
 
-            if (updateStatus.changedRows > 0) {
-                var slots = await _db2.default.get({
-                    vid: vehicle.getId()
-                }, _parkingSlot2.default);
+      return park;
+    }()
+  }, {
+    key: "unpark",
+    value: function () {
+      var _unpark = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee3(parkingLotId, vehicleNo, ticketNo) {
+        var vehicle, result;
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return _db.default.get({
+                  vno: vehicleNo
+                }, _vehicle.default);
 
-                var ticket = new _ticket2.default(slots[0], vehicle, parkingLotId);
-                await ticket.save();
+              case 2:
+                vehicle = _context3.sent;
 
-                return ticket;
-            } else {
-                throw new Error('No Parking Available!');
-            }
-        }
-    }, {
-        key: 'unpark',
-        value: async function unpark(parkingLotId, vehicleNo, ticketNo) {
-            var vehicle = await _db2.default.get({
-                vno: vehicleNo
-            }, _vehicle2.default);
+                if (vehicle.length > 0) {
+                  vehicle = vehicle[0];
+                }
 
-            if (vehicle.length > 0) {
-                vehicle = vehicle[0];
-            }
+                _context3.next = 6;
+                return _db.default.query("UPDATE ".concat(_ticket.default.tableName, "\n            SET\n                state = ").concat(_ticket.default.states.PAID, ",\n                exit_time = ?\n            WHERE \n                id = ?\n            AND\n                vid = ?\n            AND \n                state = ?\n            AND\n                plid = ?\n            "), [_db.default.getCurrentTime(), ticketNo, vehicle.getId(), _ticket.default.states.CREATED, parkingLotId]);
 
-            var result = await _db2.default.query('UPDATE ' + _ticket2.default.tableName + '\n            SET\n                state = ' + _ticket2.default.states.PAID + ',\n                exit_time = ?\n            WHERE \n                id = ?\n            AND\n                vid = ?\n            AND \n                state = ?\n            AND\n                plid = ?\n            ', [_db2.default.getCurrentTime(), ticketNo, vehicle.getId(), _ticket2.default.states.CREATED, parkingLotId]);
+              case 6:
+                result = _context3.sent;
 
-            if (result.changedRows > 0) {
-                result = await _db2.default.query('\n                UPDATE ' + _parkingSlot2.default.tableName + '\n                    SET\n                    state = ' + _parkingSlot2.default.states.FREE + ',\n                    vid = NULL\n                WHERE \n                    vid = ?\n                    and\n                    plid = ?\n            ', [vehicle.getId(), parkingLotId]);
-            } else {
+                if (!(result.changedRows > 0)) {
+                  _context3.next = 14;
+                  break;
+                }
+
+                _context3.next = 10;
+                return _db.default.query("\n                UPDATE ".concat(_parkingSlot.default.tableName, "\n                    SET\n                    state = ").concat(_parkingSlot.default.states.FREE, ",\n                    vid = NULL\n                WHERE \n                    vid = ?\n                    and\n                    plid = ?\n            "), [vehicle.getId(), parkingLotId]);
+
+              case 10:
+                result = _context3.sent;
+                return _context3.abrupt("return", true);
+
+              case 14:
                 throw new Error('Invalid Ticket');
+
+              case 15:
+              case "end":
+                return _context3.stop();
             }
-        }
+          }
+        }, _callee3);
+      }));
 
-        /**
-         * 
-         * @param {String} ticketNo 
-         */
+      function unpark(_x6, _x7, _x8) {
+        return _unpark.apply(this, arguments);
+      }
 
-    }, {
-        key: 'payTicket',
-        value: function payTicket(ticketNo) {
-            var ticket = _ticket2.default.getTicket(ticketNo);
-            var parkingSlot = ticket.getSlot();
-            var vehicle = parkingSlot.removeVehicle();
-            this.parkingLot.markSlotFree(parkingSlot);
-            ticket.markAsPaid();
-            return vehicle;
-        }
-    }]);
+      return unpark;
+    }()
+  }]);
 
-    return ParkingManager;
+  return ParkingManager;
 }();
 
-exports.default = new ParkingManager();
+var _default = new ParkingManager();
+
+exports.default = _default;

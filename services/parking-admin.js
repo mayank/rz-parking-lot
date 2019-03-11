@@ -1,36 +1,17 @@
 import ParkingLot from '../models/parking-lot'
 import ParkingSlot from '../models/parking-slot'
 import DBModel from '../models/db'
+import Vehicle from '../models/vehicle'
 
 class ParkingAdmin {
-
-    constructor() {
-        this.parkingLots = {}
-    }
-
-    /**
-     * creates a parking lot
-     * with given parameters 
-     * @param {JSON} json 
-     * @example
-     * {
-     *     "name": "xyz",
-     *     "floors": [{
-     *          "no": 1,
-     *          "slots": [{
-     *              "no": 1,
-     *              "distance": 5
-     *          }...]
-     *     }...]
-     * }
-     */
+    
     async createParkingLot(json) {
         await DBModel.beginTransaction()
 
         try{
             let parkingLot = new ParkingLot(json.name)
             await parkingLot.save()
-            console.log(parkingLot)
+            
             if(json.floors) {
                 for(let floor of json.floors) {
                     if(floor.slots) {
@@ -41,14 +22,47 @@ class ParkingAdmin {
                     }
                 }
             }
-            await DBModel.commitTransaction()
+            await DBModel.commit()
+            return parkingLot.getId()
         }
         catch(err) {
             await DBModel.rollback()
-            throw new Error('Rollback Transaction')
+            throw (new Error('Some Error Occured'))
+            
         }
+    }
+
+    async getParkingLot(id) {
+        let parkingLot = await DBModel.find(id, ParkingLot)
+
+        let slots = await DBModel.get({
+            plid: parkingLot.getId()
+        }, ParkingSlot)
         
-        return parkingLot.getId()
+        let vehicleIds = []
+        for(let slot of slots) {
+            let vehicleId = slot.getVehicleId()
+            if(vehicleId){
+                vehicleIds.push(vehicleId)
+            }
+        }
+
+        let vehicleMap = {}
+
+        if(vehicleIds.length > 0){
+            let vehicles = await DBModel.get({
+                id: vehicleIds
+            }, Vehicle)
+
+            for(let vehicle of vehicles) {
+                vehicleMap[vehicle.getId()] = vehicle
+            }
+        }
+    
+        return {
+            slots: slots,
+            vehicles: vehicleMap
+        }
     }
 }
 

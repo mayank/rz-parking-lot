@@ -38,9 +38,6 @@ class Ticket extends DBModel {
         return states
     }
 
-    isValid() {
-        return this.db.state == states.CREATED
-    }
 }
 
 Ticket.setTable('ticket')

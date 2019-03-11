@@ -1,124 +1,363 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
+exports.default = void 0;
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _parkingLot = _interopRequireDefault(require("../models/parking-lot"));
 
-var _parkingLot2 = require('../models/parking-lot');
+var _parkingSlot = _interopRequireDefault(require("../models/parking-slot"));
 
-var _parkingLot3 = _interopRequireDefault(_parkingLot2);
+var _db = _interopRequireDefault(require("../models/db"));
 
-var _parkingSlot = require('../models/parking-slot');
-
-var _parkingSlot2 = _interopRequireDefault(_parkingSlot);
-
-var _db = require('../models/db');
-
-var _db2 = _interopRequireDefault(_db);
+var _vehicle = _interopRequireDefault(require("../models/vehicle"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ParkingAdmin = function () {
-    function ParkingAdmin() {
-        _classCallCheck(this, ParkingAdmin);
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-        this.parkingLots = {};
-    }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-    /**
-     * creates a parking lot
-     * with given parameters 
-     * @param {JSON} json 
-     * @example
-     * {
-     *     "name": "xyz",
-     *     "floors": [{
-     *          "no": 1,
-     *          "slots": [{
-     *              "no": 1,
-     *              "distance": 5
-     *          }...]
-     *     }...]
-     * }
-     */
+var ParkingAdmin =
+/*#__PURE__*/
+function () {
+  function ParkingAdmin() {
+    _classCallCheck(this, ParkingAdmin);
+  }
 
+  _createClass(ParkingAdmin, [{
+    key: "createParkingLot",
+    value: function () {
+      var _createParkingLot = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee(json) {
+        var parkingLot, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, floor, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, slot, parkingSlot;
 
-    _createClass(ParkingAdmin, [{
-        key: 'createParkingLot',
-        value: async function createParkingLot(json) {
-            await _db2.default.beginTransaction();
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return _db.default.beginTransaction();
 
-            try {
-                var _parkingLot = new _parkingLot3.default(json.name);
-                await _parkingLot.save();
-                console.log(_parkingLot);
-                if (json.floors) {
-                    var _iteratorNormalCompletion = true;
-                    var _didIteratorError = false;
-                    var _iteratorError = undefined;
+              case 2:
+                _context.prev = 2;
+                parkingLot = new _parkingLot.default(json.name);
+                _context.next = 6;
+                return parkingLot.save();
 
-                    try {
-                        for (var _iterator = json.floors[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                            var floor = _step.value;
-
-                            if (floor.slots) {
-                                var _iteratorNormalCompletion2 = true;
-                                var _didIteratorError2 = false;
-                                var _iteratorError2 = undefined;
-
-                                try {
-                                    for (var _iterator2 = floor.slots[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                                        var slot = _step2.value;
-
-                                        var parkingSlot = new _parkingSlot2.default(_parkingLot.getId(), floor.no, slot.no, slot.distance);
-                                        await parkingSlot.save();
-                                    }
-                                } catch (err) {
-                                    _didIteratorError2 = true;
-                                    _iteratorError2 = err;
-                                } finally {
-                                    try {
-                                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                                            _iterator2.return();
-                                        }
-                                    } finally {
-                                        if (_didIteratorError2) {
-                                            throw _iteratorError2;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } catch (err) {
-                        _didIteratorError = true;
-                        _iteratorError = err;
-                    } finally {
-                        try {
-                            if (!_iteratorNormalCompletion && _iterator.return) {
-                                _iterator.return();
-                            }
-                        } finally {
-                            if (_didIteratorError) {
-                                throw _iteratorError;
-                            }
-                        }
-                    }
+              case 6:
+                if (!json.floors) {
+                  _context.next = 59;
+                  break;
                 }
-                await _db2.default.commitTransaction();
-            } catch (err) {
-                await _db2.default.rollback();
-                throw new Error('Rollback Transaction');
+
+                _iteratorNormalCompletion = true;
+                _didIteratorError = false;
+                _iteratorError = undefined;
+                _context.prev = 10;
+                _iterator = json.floors[Symbol.iterator]();
+
+              case 12:
+                if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
+                  _context.next = 45;
+                  break;
+                }
+
+                floor = _step.value;
+
+                if (!floor.slots) {
+                  _context.next = 42;
+                  break;
+                }
+
+                _iteratorNormalCompletion2 = true;
+                _didIteratorError2 = false;
+                _iteratorError2 = undefined;
+                _context.prev = 18;
+                _iterator2 = floor.slots[Symbol.iterator]();
+
+              case 20:
+                if (_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done) {
+                  _context.next = 28;
+                  break;
+                }
+
+                slot = _step2.value;
+                parkingSlot = new _parkingSlot.default(parkingLot.getId(), floor.no, slot.no, slot.distance);
+                _context.next = 25;
+                return parkingSlot.save();
+
+              case 25:
+                _iteratorNormalCompletion2 = true;
+                _context.next = 20;
+                break;
+
+              case 28:
+                _context.next = 34;
+                break;
+
+              case 30:
+                _context.prev = 30;
+                _context.t0 = _context["catch"](18);
+                _didIteratorError2 = true;
+                _iteratorError2 = _context.t0;
+
+              case 34:
+                _context.prev = 34;
+                _context.prev = 35;
+
+                if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+                  _iterator2.return();
+                }
+
+              case 37:
+                _context.prev = 37;
+
+                if (!_didIteratorError2) {
+                  _context.next = 40;
+                  break;
+                }
+
+                throw _iteratorError2;
+
+              case 40:
+                return _context.finish(37);
+
+              case 41:
+                return _context.finish(34);
+
+              case 42:
+                _iteratorNormalCompletion = true;
+                _context.next = 12;
+                break;
+
+              case 45:
+                _context.next = 51;
+                break;
+
+              case 47:
+                _context.prev = 47;
+                _context.t1 = _context["catch"](10);
+                _didIteratorError = true;
+                _iteratorError = _context.t1;
+
+              case 51:
+                _context.prev = 51;
+                _context.prev = 52;
+
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                  _iterator.return();
+                }
+
+              case 54:
+                _context.prev = 54;
+
+                if (!_didIteratorError) {
+                  _context.next = 57;
+                  break;
+                }
+
+                throw _iteratorError;
+
+              case 57:
+                return _context.finish(54);
+
+              case 58:
+                return _context.finish(51);
+
+              case 59:
+                _context.next = 61;
+                return _db.default.commit();
+
+              case 61:
+                return _context.abrupt("return", parkingLot.getId());
+
+              case 64:
+                _context.prev = 64;
+                _context.t2 = _context["catch"](2);
+                _context.next = 68;
+                return _db.default.rollback();
+
+              case 68:
+                throw new Error('Some Error Occured');
+
+              case 69:
+              case "end":
+                return _context.stop();
             }
+          }
+        }, _callee, null, [[2, 64], [10, 47, 51, 59], [18, 30, 34, 42], [35,, 37, 41], [52,, 54, 58]]);
+      }));
 
-            return parkingLot.getId();
-        }
-    }]);
+      function createParkingLot(_x) {
+        return _createParkingLot.apply(this, arguments);
+      }
 
-    return ParkingAdmin;
+      return createParkingLot;
+    }()
+  }, {
+    key: "getParkingLot",
+    value: function () {
+      var _getParkingLot = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee2(id) {
+        var parkingLot, slots, vehicleIds, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, slot, vehicleId, vehicleMap, vehicles, _iteratorNormalCompletion4, _didIteratorError4, _iteratorError4, _iterator4, _step4, vehicle;
+
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return _db.default.find(id, _parkingLot.default);
+
+              case 2:
+                parkingLot = _context2.sent;
+                _context2.next = 5;
+                return _db.default.get({
+                  plid: parkingLot.getId()
+                }, _parkingSlot.default);
+
+              case 5:
+                slots = _context2.sent;
+                vehicleIds = [];
+                _iteratorNormalCompletion3 = true;
+                _didIteratorError3 = false;
+                _iteratorError3 = undefined;
+                _context2.prev = 10;
+
+                for (_iterator3 = slots[Symbol.iterator](); !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                  slot = _step3.value;
+                  vehicleId = slot.getVehicleId();
+
+                  if (vehicleId) {
+                    vehicleIds.push(vehicleId);
+                  }
+                }
+
+                _context2.next = 18;
+                break;
+
+              case 14:
+                _context2.prev = 14;
+                _context2.t0 = _context2["catch"](10);
+                _didIteratorError3 = true;
+                _iteratorError3 = _context2.t0;
+
+              case 18:
+                _context2.prev = 18;
+                _context2.prev = 19;
+
+                if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+                  _iterator3.return();
+                }
+
+              case 21:
+                _context2.prev = 21;
+
+                if (!_didIteratorError3) {
+                  _context2.next = 24;
+                  break;
+                }
+
+                throw _iteratorError3;
+
+              case 24:
+                return _context2.finish(21);
+
+              case 25:
+                return _context2.finish(18);
+
+              case 26:
+                vehicleMap = {};
+
+                if (!(vehicleIds.length > 0)) {
+                  _context2.next = 50;
+                  break;
+                }
+
+                _context2.next = 30;
+                return _db.default.get({
+                  id: vehicleIds
+                }, _vehicle.default);
+
+              case 30:
+                vehicles = _context2.sent;
+                _iteratorNormalCompletion4 = true;
+                _didIteratorError4 = false;
+                _iteratorError4 = undefined;
+                _context2.prev = 34;
+
+                for (_iterator4 = vehicles[Symbol.iterator](); !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                  vehicle = _step4.value;
+                  vehicleMap[vehicle.getId()] = vehicle;
+                }
+
+                _context2.next = 42;
+                break;
+
+              case 38:
+                _context2.prev = 38;
+                _context2.t1 = _context2["catch"](34);
+                _didIteratorError4 = true;
+                _iteratorError4 = _context2.t1;
+
+              case 42:
+                _context2.prev = 42;
+                _context2.prev = 43;
+
+                if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
+                  _iterator4.return();
+                }
+
+              case 45:
+                _context2.prev = 45;
+
+                if (!_didIteratorError4) {
+                  _context2.next = 48;
+                  break;
+                }
+
+                throw _iteratorError4;
+
+              case 48:
+                return _context2.finish(45);
+
+              case 49:
+                return _context2.finish(42);
+
+              case 50:
+                return _context2.abrupt("return", {
+                  slots: slots,
+                  vehicles: vehicleMap
+                });
+
+              case 51:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, null, [[10, 14, 18, 26], [19,, 21, 25], [34, 38, 42, 50], [43,, 45, 49]]);
+      }));
+
+      function getParkingLot(_x2) {
+        return _getParkingLot.apply(this, arguments);
+      }
+
+      return getParkingLot;
+    }()
+  }]);
+
+  return ParkingAdmin;
 }();
 
-exports.default = new ParkingAdmin();
+var _default = new ParkingAdmin();
+
+exports.default = _default;
