@@ -7,7 +7,7 @@ const config = {
         "password": "root"
     },
     "test": {
-        "host": "127.0.0.1",
+        "host": "mysql",
         "port": 3306,
         "database": "parking_test",
         "user": "root",

@@ -10,7 +10,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh "docker-compose up -d"
-                sh "docker run --entrypoint npm parking-lot:B_${env.BUILD_ID} test"
+                sh "docker run --entrypoint npm --network parking-lot_testing parking-lot:B_${env.BUILD_ID} test"
                 sh "docker-compose down"
             }
         }
