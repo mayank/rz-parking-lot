@@ -41,6 +41,9 @@ class DatabaseManager {
     }
 
     async migrate() {
+        await this.query('drop database parking_test', [])
+        await this.query('create database parking_test', [])
+
         let sqlQueries = FS.readFileSync(__dirname + '/../migrations/database.sql', 'utf-8').replace('\n', '').split(';')
         for(let query of sqlQueries) {
             if(query.trim()){
