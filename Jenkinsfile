@@ -9,7 +9,7 @@ pipeline {
         }
         stage('Test') {
             steps {
-                echo 'Testing...'
+                sh "docker run parking-lot:B_${env.BUILD_ID} npm test"
             }
         }
     }
