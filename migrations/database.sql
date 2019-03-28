@@ -1,3 +1,5 @@
+CREATE USER 'app'@'%' IDENTIFIED BY 'app123';
+
 DROP TABLE IF EXISTS parking_lot;
 
 CREATE TABLE parking_lot (
