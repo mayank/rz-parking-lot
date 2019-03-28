@@ -3,7 +3,8 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Building...'
+                echo "Running build : ${env.BUILD_ID}"
+                bash "docker build -t parking-lot:B_${env.BUILD_ID} ."
             }
         }
         stage('Test') {
