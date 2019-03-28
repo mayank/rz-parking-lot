@@ -5,4 +5,4 @@ WORKDIR  /app
 
 RUN npm install
 
-ENTRYPOINT node server.js
+ENTRYPOINT node dist/server.js
