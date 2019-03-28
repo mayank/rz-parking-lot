@@ -9,7 +9,12 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh "docker run parking-lot:B_${env.BUILD_ID} npm test"
+                sh "docker run --entrypoint npm parking-lot:B_${env.BUILD_ID} test"
+            }
+        }
+        stage('Coverage') {
+            steps {
+                echo "Publishing Coverage Reports"
             }
         }
     }
