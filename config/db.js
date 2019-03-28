@@ -10,8 +10,8 @@ const config = {
         "host": "mysql",
         "port": 3306,
         "database": "parking_test",
-        "user": "app",
-        "password": "app123"
+        "user": "root",
+        "password": "root"
     }
 }
 
